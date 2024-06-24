@@ -24,7 +24,7 @@ jobs:
         with:
           images: lyiase/elasticsearch-japanese
           tags: |
-            type=custom,pattern=latest
+            type=raw,value=latest
             type=semver,pattern={{version}}
       
       - name: Build and push Docker image
