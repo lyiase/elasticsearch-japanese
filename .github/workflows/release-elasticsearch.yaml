@@ -27,7 +27,7 @@ jobs:
     steps:
       # workflow_run uses the default branch, never the PR's scripts or artifacts.
       - name: Check out the trusted automation
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
