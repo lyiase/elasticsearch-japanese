@@ -1,0 +1,28 @@
+name: Validate Docker image
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-docker-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the PR
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Test release automation
+        run: node --test .github/scripts/release-elasticsearch.test.cjs
+
+      - name: Build the Docker image without publishing
+        run: docker build --tag elasticsearch-japanese:validation .
