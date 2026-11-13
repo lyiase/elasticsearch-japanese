@@ -1,0 +1,40 @@
+name: Release Elasticsearch update
+
+on:
+  workflow_run:
+    workflows: [Validate Docker image]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: release-elasticsearch
+  cancel-in-progress: false
+  queue: max
+
+jobs:
+  release:
+    if: >-
+      github.repository == 'lyiase/elasticsearch-japanese' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      # workflow_run uses the default branch, never the PR's scripts or artifacts.
+      - name: Check out the trusted automation
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Merge, release, and start Docker Hub publishing
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const release = require('./.github/scripts/release-elasticsearch.cjs');
+            await release({ github, context, core });
