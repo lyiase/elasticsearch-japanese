@@ -11,6 +11,7 @@ permissions:
 concurrency:
   group: publish-dockerhub
   cancel-in-progress: false
+  queue: max
 
 jobs:
   push_to_registry:
